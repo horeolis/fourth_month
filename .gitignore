@@ -1,0 +1,4 @@
+venv
+.venv
+blog/__pycache__
+posts/__pycache__

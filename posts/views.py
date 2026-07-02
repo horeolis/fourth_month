@@ -1,29 +1,45 @@
 from django.shortcuts import render
-from django.http.response  import HttpResponse, HttpResponseBadRequest
-from django.shortcuts import render
 
-# Create your views here.
+from posts.models import Post
+
 
 def home(request):
-    return HttpResponse("<h1> Hello World!</h1>")
+    post = {
+        "title": "Welcome",
+        "content": "This is your Django blog.",
+        "image": "",
+        "rate": "",
+    }
+    return render(request, "index.html", {"post": post})
 
 
 def about(request):
-    name = "Islam"
-    age = 22
-    nickname = "horeolisssuka"
+    post = {
+        "title": "About",
+        "content": "This page is working.",
+        "image": "",
+        "rate": "",
+    }
+    return render(request, "index.html", {"post": post})
 
-    response = f"<h1>{name}</h1> <br> <h2> {age} </h2> <p> {nickname} </p>"
 
-    return HttpResponse(response)
+def post_list(request):
+    q = request.GET.get("q", None)
+    posts = Post.objects.filter(is_published=True)
 
+    if q:
+        posts = posts.filter(title__icontains=q)
 
-def image_test(request):
-    name = "Zoro"
-    age = 21
-    lvl = 35
+    return render(
+        request,
+        "posts/post_list.html",
+        {"posts": posts, "count": posts.count(), "request": request},
+    )
 
-    image = "https://i.pinimg.com/474x/19/24/0e/19240e2580374bae68529aa38dffd392.jpg"
-
-    response = f"<h1>{name}</h1> <br> <h2> {age} </h2> <p> {lvl} </p> <img src='{image}'>"
-    return HttpResponse(response)
+def post_is_published(request):
+    posts = Post.objects.filter(is_published=True)
+    return render(
+        request,
+        "posts/post_list.html",
+        {"posts": posts, "count": posts.count(), "request": request},
+    )
